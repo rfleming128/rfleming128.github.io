@@ -1,39 +1,54 @@
-let result;
-
 let cards;
 let payload;
+let result;
+
+const startPlayers = [
+    "Mike Roff",
+    "Michelle Roff", 
+    "Anna Baby",
+    "Rosie Baby",
+    "Ryan Fleming",
+    "Josette Ardillo"
+]
+
+const startWeapons = [
+    "Muddy Shoes",
+    "Spilled Drink",
+    "Packet of Crisps",
+    "Pencil Shavings",
+    "Scuffed Walls",
+    "Wet Umbrella"
+]
+
+const startRooms = [
+    "Main Audatorium",
+    "Downstairs Hallway", 
+    "Staircase",
+    "Kitchen",
+    "Second School",
+    "Overflow Audatorium",
+    "Upstairs Hall",
+    "Foyer",
+    "Elevator"
+]
+
+let players, weapons, rooms, playerCards
 
 const start = () => {
-    const players = [
-        "Miss Scarlet",
-        "Rev Green", 
-        "Colonel Mustard",
-        "Professor Plum",
-        "Mrs Peacock",
-        "Mrs White"
-    ]
+    players = [...startPlayers]
     
-    const weapons = [
-        "Candlestick",
-        "Dagger",
-        "Lead Pipe",
-        "Revolver",
-        "Rope",
-        "Wrench"
-    ]
+    weapons = [...startWeapons]
     
-    const rooms = [
-        "Kitchen",
-        "Ballroom", 
-        "Conservatory",
-        "Dining Room",
-        "Billiard Room",
-        "Library",
-        "Lounge",
-        "Hall",
-        "Study"
-    ]
-    
+    rooms = [...startRooms]
+
+    select_hidden_cards();
+
+    generatePlayerCards();
+
+    generatePlayerCodes();
+}
+
+const select_hidden_cards = () => {
     select_player = () => {
         let randomPlayerNum = Math.floor(Math.random() * players.length)
         let player = players[randomPlayerNum]
@@ -49,7 +64,7 @@ const start = () => {
     }
     
     select_weapon = () => {
-        let randomWeaponNum = Math.floor(Math.random() * rooms.length)
+        let randomWeaponNum = Math.floor(Math.random() * weapons.length)
         let weapon = weapons[randomWeaponNum];
         weapons.splice(randomWeaponNum, 1);
         return weapon;
@@ -68,35 +83,96 @@ const start = () => {
     cards = [...players, ...weapons, ...rooms];
 }
 
-select_card = () => {
+const select_card = () => {
+    if(cards.length <= 0) return -1
     let randomCardNum = Math.floor(Math.random() * cards.length)
     let card = cards[randomCardNum];
     cards.splice(randomCardNum, 1);
     return card
 }
 
-const generatePlayerCode = () => {
-    payload = {
-        cards: [
-            select_card(),
-            select_card(),
-            select_card()
-        ],
-        result
+const generatePlayerCards = () => {
+    let numOfPlayers = document.getElementById("players").value
+
+    playerCards = [];
+
+    let cardsEach = Math.floor(cards.length / numOfPlayers)
+
+    for(i = 0; i < numOfPlayers; i++){ 
+        for(j = 0; j < cardsEach; j++){
+            if(playerCards[i] == undefined){
+                playerCards[i] = [select_card()]
+            }
+            else{
+                playerCards[i].push(select_card());
+            }
+        }
     }
-    let code = btoa(JSON.stringify(payload))
-    document.getElementById("code").value = code
+
+    let overflowCards = cards.length % numOfPlayers
+    if(overflowCards > 0) {
+        for(i = 0; i < overflowCards; i++){ 
+            playerCards[i].push(select_card());
+        }
+    }
+
+    console.log(playerCards);
+}
+
+const generatePlayerCodes = () => {
+    document.getElementById("results").innerHTML = ""
+    let codes = []
+
+    for(var i = 0; i < playerCards.length; i++){ 
+        let payload = { 
+            cards: playerCards[i], 
+            result
+        }
+
+        codes.push(btoa(JSON.stringify(payload)));
+    }
+
+    for(var i = 0; i < codes.length; i++){
+        let node = document.createElement("p")
+        node.innerHTML = codes[i];
+        document.getElementById("results").appendChild(node)
+    }
 }
 
 const reveal = () => {
-    document.getElementById("result").innerText += payload.result.murderer + " in the " + payload.result.room + " with the " + payload.result.weapon
+    document.getElementById("result").appendChild(generateCard(payload.result.murderer));
+    document.getElementById("result").appendChild(generateCard(payload.result.room));
+    document.getElementById("result").appendChild(generateCard(payload.result.weapon));
 }
 
 const decodePlayerCode = () => {
+    if (document.getElementById("code").value === "")
+        return;
+        
     let code = document.getElementById("code").value;
     payload = JSON.parse(atob(code))
+    let uiCards = document.getElementById("cards").getElementsByClassName("card")
 
-    document.getElementById("card1").innerText += payload.cards[0];
-    document.getElementById("card2").innerText += payload.cards[1];
-    document.getElementById("card3").innerText += payload.cards[2];
+    for(i = uiCards.length - 1; i >= 0; i--){
+        document.getElementById("cards").removeChild(uiCards[i]);
+    }
+
+    for(var i = 0; i < payload.cards.length; i++){ 
+        document.getElementById("cards").appendChild(generateCard(payload.cards[i]));
+    }
+
+    document.getElementById("revealButton").attributes.removeNamedItem("disabled");
+}
+
+const generateCard = card => {
+    let cardNode = document.createElement("div");
+    cardNode.className = "card"
+    let cardBody = document.createElement("div");
+    cardBody.className = "card-body"
+    let cardText = document.createElement("h5");
+    cardText.className = "card-title"
+    cardText.innerHTML = card;
+    cardBody.appendChild(cardText);
+    cardNode.appendChild(cardBody);
+    return cardNode;
 }
