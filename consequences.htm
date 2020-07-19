@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+    <head>
+        <title>Consequences</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    </head>
+    <body>
+        <div class="container">
+            <h1>Consequences</h1>
+            <div class="form-group">
+                <input type="text" id="code" class="form-control" placeholder="Enter code given by other player here and click decode to carry on..."/>
+            </div>
+            <input type="button" onclick="decode()" value="decode" class="btn btn-primary"/>
+
+            <h1 id="text">His name was... </h1>
+            <div class="form-group">
+                <input type="text" id="input" class="form-control" placeholder="Enter name in here, click submit and pass the code to the next player"/>
+            </div>
+            <input type="button" onclick="submit()" value="submit" class="btn btn-primary"/>
+            <h2>Pass this code to next player...</h2>
+            <p id="outputCode"></p>
+        </div>
+        <script src="consequences.js"></script>
+    </body>
+</html>
