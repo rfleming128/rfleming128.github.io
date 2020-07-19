@@ -33,6 +33,7 @@ const decode = () => {
     }
 
     document.getElementById("code").value = ""
+    document.getElementById("outputCode").innerHTML = "";
 }
 
 const submit = () => {
