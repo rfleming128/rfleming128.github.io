@@ -27,8 +27,9 @@ const decode = () => {
             document.getElementById("input").placeholder = "Enter what the consequence was in here and click submit and pass the code to the next player..."
             break; 
         case 5:
-            document.getElementById("text").innerHTML = `His name was ${payload.hisName} and her name was ${payload.herName}, they met at ${payload.whereMet}, he said ${payload.heSaid} and she said ${payload.sheSaid} and the consequence was ${payload.consequence}`
+            document.getElementById("text").innerHTML = `His name was ${payload.hisName} and her name was ${payload.herName}, they met at ${payload.whereMet}, he said : "${payload.heSaid}" and she said: "${payload.sheSaid}" and the consequence was ${payload.consequence}`
             document.getElementById("input").placeholder = "Enter what he said in here and click submit and pass the code to the next player to begin again..."
+            payload = undefined;
             break;
     }
 
