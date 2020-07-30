@@ -8,7 +8,8 @@ const startPlayers = [
     "Anna Baby",
     "Rosie Baby",
     "Ryan Fleming",
-    "Josette Ardillo"
+    "Josette Ardillo",
+    "Madalyne Eddie"
 ]
 
 const startWeapons = [
@@ -125,6 +126,7 @@ const generatePlayerCodes = () => {
 
     for(var i = 0; i < playerCards.length; i++){ 
         let payload = { 
+            cardOptions: [...startPlayers, ...startWeapons, ...startRooms],
             cards: playerCards[i], 
             result
         }
@@ -161,6 +163,8 @@ const decodePlayerCode = () => {
         document.getElementById("cards").appendChild(generateCard(payload.cards[i]));
     }
 
+    generateTickBoxes(payload.cardOptions, payload.cards);
+
     document.getElementById("revealButton").attributes.removeNamedItem("disabled");
 }
 
@@ -175,4 +179,28 @@ const generateCard = card => {
     cardBody.appendChild(cardText);
     cardNode.appendChild(cardBody);
     return cardNode;
+}
+
+const generateTickBoxes = (cardOptions, cards) => {
+    let outerDiv = document.getElementById("options");
+    for(let i = 0; i <cardOptions.length; i++){ 
+        let divNode = document.createElement("div");
+        divNode.className="form-check"
+        let labelNode = document.createElement("label");
+        labelNode.innerHTML = cardOptions[i];
+        labelNode.className = "form-check-label"
+        let inputNode = document.createElement("input");
+        inputNode.type = "checkbox"
+        inputNode.className = "form-check-input"
+        for(let j = 0; j < cards.length; j++){ 
+            if (cardOptions[i] == cards[j]){
+                inputNode.checked = true;
+                break;
+            }
+        }
+
+        divNode.appendChild(inputNode);
+        divNode.appendChild(labelNode);
+        outerDiv.appendChild(divNode);
+    }
 }
